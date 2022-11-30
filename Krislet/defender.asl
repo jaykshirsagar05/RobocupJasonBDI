@@ -1,3 +1,5 @@
+/* Author: Jay Kshirsagar */
+
 /* Initial goal */
 /* First my agent will find defending zone and will stay in this area */
 !gotoDzone.
