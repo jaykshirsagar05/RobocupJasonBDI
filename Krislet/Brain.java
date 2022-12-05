@@ -119,6 +119,54 @@ class Brain extends Thread implements SensorInput
 		m_memory.waitForNewInfo();
 
 
+		// Doing action according to intention
+		
+		switch(intent) {
+			case TURN: {
+				m_krislet.turn(40);
+				m_memory.waitForNewInfo();
+				break;
+			}
+			case TURN_TO_BALL: {
+				if (object != null) {
+					m_krislet.turn(object.m_direction);
+				}
+				break;
+			}
+			case KICK: {
+				if (enemyGoal != null) {
+					m_krislet.kick(200, enemyGoal.m_direction);
+				}
+				break;
+			}
+			case FIND_GOAL: {
+				m_krislet.turn(40);
+				m_memory.waitForNewInfo();
+				break;
+			}
+			case MONITOR_BALL: {
+				break;
+			}
+			case DASH_TO_BALL: {
+				if (object != null) {
+					m_krislet.dash(10*object.m_distance);
+				}
+				break;
+			}
+			case DASH_TO_OWN_GOAL: {
+				if (selfGoal != null) {
+					m_krislet.dash(10*selfGoal.m_distance);
+				}
+				break;
+			}
+			case DASH_TO_ENEMY_GOAL: {
+				if (enemyGoal != null) {
+					m_krislet.dash(10*enemyGoal.m_distance);
+				}
+				break;
+			} 
+		}
+
 		// if( object == null )
 		//     {
 		// 	// If you don't know where is ball then find it
