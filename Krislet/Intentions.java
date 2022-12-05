@@ -1,12 +1,13 @@
 //File Intentions.java
-//Author: Jay Kshirsagar
 
 //This file lists the choice of actions for our JasonAgent.
 public enum Intentions {
-	turn,
-	kick,
-	monitorBall,
-	dash_to_ball,
-	dash_to_own_goal,
-	dash_to_enemy_goal,
+	TURN,
+	TURN_TO_BALL,
+	KICK,
+	FIND_GOAL,
+	MONITOR_BALL,
+	DASH_TO_BALL,
+	DASH_TO_OWN_GOAL,
+	DASH_TO_ENEMY_GOAL,
 }

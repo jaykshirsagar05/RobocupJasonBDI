@@ -1,5 +1,4 @@
 //File: Belief.java
-//Author: Jay Kshirsagar
 
 //These are the set of belief prepositions that our agent can add to it's belief space by processing the precepts. 
 
@@ -13,4 +12,10 @@ public enum Belief {
 	inGZone,
 	inAZone,
 	selfGoalVisible,
+	atOwnNet,
+	goalVisible,
+	readyToDefend,
+	facingBall,
+	facingGoal,
+	ballInDefenseRange
 }

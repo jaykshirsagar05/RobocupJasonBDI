@@ -27,7 +27,7 @@
 //if ball is in defending zone and it is visible then just monitor it and wait for the chance to kick it
 +!gotoDzone
 	: ballVisible & inDZone
-	<- monitorBall;
+	<- monitor_ball;
 	- ballVisible;
 	- inDZone;
 	!kickBall.
@@ -72,13 +72,13 @@
 //if ball is not visible then perform turn.
 +!ballSearch
 	: not ballVisible
-	<- turn;
+	<- TURN;
 	!ballSearch.
 
 //If ball is fall and agent not in defending zone then just monitor ball and switch to gotoDzone goal.
 +!ballSearch
 	: ballFar & not inDZone
-	<- monitorBall;
+	<- monitor_ball;
 	-ballFar;
 	-balVisible;
 	!gotoDZone.
@@ -86,7 +86,7 @@
 //If ball is far and agent is in defending zone and self goal is not visible then just monitor ball.
 +!ballSearch
 	: ballFar & inDZone & not selfGoalVisible
-	<- monitorBall;
+	<- monitor_ball;
 	-selfGoalVisible;
 	-ballFar;
 	-ballVisible;
@@ -122,7 +122,7 @@
 //If ball is far and agent is in defending zone and self goal is visible then defend it by dashing towards it.
 +!kickBall
 	: ballFar & inDZone & selfGoalVisible
-	<- dash_to_ball;
+	<- dashToBall;
 	-selfGoalVisible;
 	-ballVisible;
 	-inDZone;
@@ -140,7 +140,7 @@
 //If ball is far and agent in golie zone than dash towards enemy goal by switching to gotoDzone goal.
 +!kickBall
 	: ballFar & inGZone
-	<- dash_to_enemy_goal;
+	<- dashToEnemyGoal;
 	-ballVisible;
 	-ballFar;
 	-inGZone;
@@ -149,7 +149,7 @@
 //If ball is far and agent is in attacker zone then dash towards own goal and switch to gotoDzone goal.
 +!kickBall
 	: ballFar & inAZone
-	<- dash_to_own_goal;
+	<- dashToOwnGoal;
 	-ballVisible;
 	-ballFar;
 	-inAZone;
@@ -158,7 +158,7 @@
 //If ball is near then dash towards it to kick it.
 +!kickBall
 	: ballNear
-	<- dash_to_ball;
+	<- dashToBall;
 	-ballVisible;
 	-ballNear;
 	!kickBall.
