@@ -49,6 +49,7 @@ class Krislet implements SendCommand
 	String	hostName = new String("");
 	int			port = 6000;
 	String	team = new String("Krislet3");
+	String playerType = new String();
 	
 	try
 	    {
@@ -67,6 +68,9 @@ class Krislet implements SendCommand
 			    {
 				team = a[c+1];
 			    }
+			else if( a[c].compareTo("-playerType") == 0) {
+				playerType = a[c+1];
+			}
 			else
 			    {
 				throw new Exception();
@@ -92,7 +96,7 @@ class Krislet implements SendCommand
 	    }
 
 	Krislet player = new Krislet(InetAddress.getByName(hostName),
-				     port, team);
+				     port, team, playerType);
 
 	// enter main loop
 	player.mainLoop();							
@@ -100,7 +104,7 @@ class Krislet implements SendCommand
 
     //---------------------------------------------------------------------------
     // This constructor opens socket for  connection with server
-    public Krislet(InetAddress host, int port, String team) 
+    public Krislet(InetAddress host, int port, String team, String playerType) 
 	throws SocketException
     {
 	m_socket = new DatagramSocket();
@@ -108,6 +112,7 @@ class Krislet implements SendCommand
 	m_port = port;
 	m_team = team;
 	m_playing = true;
+	m_playerType = playerType;
     }
 																 
     //---------------------------------------------------------------------------
@@ -217,7 +222,8 @@ class Krislet implements SendCommand
 			    m_team, 
 			    m.group(1).charAt(0),
 			    Integer.parseInt(m.group(2)),
-			    m.group(3));
+			    m.group(3),
+				m_playerType);
     }
 
 
@@ -324,6 +330,7 @@ class Krislet implements SendCommand
     private boolean             m_playing;              // controls the MainLoop
     private Pattern message_pattern = Pattern.compile("^\\((\\w+?)\\s.*");
     private Pattern hear_pattern = Pattern.compile("^\\(hear\\s(\\w+?)\\s(\\w+?)\\s(.*)\\).*");
+	private String m_playerType;
     //private Pattern coach_pattern = Pattern.compile("coach");
     // constants
     private static final int	MSG_SIZE = 4096;	// Size of socket buffer

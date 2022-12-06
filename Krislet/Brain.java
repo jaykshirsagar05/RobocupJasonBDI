@@ -22,7 +22,8 @@ class Brain extends Thread implements SensorInput
 		 String team, 
 		 char side, 
 		 int number, 
-		 String playMode)
+		 String playMode,
+		 String playerType)
     {
 	m_timeOver = false;
 	m_krislet = krislet;
@@ -31,6 +32,7 @@ class Brain extends Thread implements SensorInput
 	m_side = side;
 	// m_number = number;
 	m_playMode = playMode;
+	m_playerType = playerType;
 	start();
     }
 
@@ -64,10 +66,38 @@ class Brain extends Thread implements SensorInput
 	ObjectInfo object;
 	ObjectInfo enemyGoal;
 	ObjectInfo selfGoal;
+	String agentAsl = "";
 
-	// first put it somewhere on my side
-	if(Pattern.matches("^before_kick_off.*",m_playMode))
-	    m_krislet.move( -Math.random()*52.5 , 34 - Math.random()*68.0 );
+	// Putting the player in the field based on it's type and decide asl file
+	if(Pattern.matches("^before_kick_off.*",m_playMode)) {
+		switch(m_playerType) {
+			case Golie: {
+				m_krislet.move( -52.5 , 0 );
+				agentAsl = "goalie.asl";
+				break;
+			}
+			case Attacker1: {
+				m_krislet.move(0.0 , 0.0 );
+				agentAsl = "attacker.asl";
+				break;
+			}
+			case Attacker2: {
+				m_krislet.move((-10.0),12.0 );
+				agentAsl = "attacker.asl";
+				break;
+			}
+			case Defender1: {
+				m_krislet.move( -34.25 , -20.16 );
+				agentAsl = "defender.asl";
+				break;
+			}
+			case Defender2: {
+				m_krislet.move( -34.25 , 20.16 );
+				agentAsl = "defender.asl";
+				break;
+			}
+		}
+	}
 
 	while( !m_timeOver )
 	    {
@@ -112,12 +142,12 @@ class Brain extends Thread implements SensorInput
 			}
 		}
 		System.out.println(perceptions);
-		JsonAgentYash agent = new JsonAgentYash("attacker.asl");
-        Intentions intent = agent.getIntention(perceptions);
-		System.out.println(intent + " is working correctly.");
-		m_krislet.turn(40);
-		m_memory.waitForNewInfo();
 
+		JsonAgentYash agent = new JsonAgentYash(agentAsl);
+        Intentions intent = agent.getIntention(perceptions);
+
+		System.out.println(intent + " is working correctly.");
+	
 
 		// Doing action according to intention
 		
@@ -249,5 +279,10 @@ class Brain extends Thread implements SensorInput
     private char			m_side;
     volatile private boolean		m_timeOver;
     private String                      m_playMode;
-    
+	private String m_playerType;
+	private final String Golie = "golie";
+	private final String Attacker1 = "attacker1";
+	private final String Attacker2 = "attacker2";
+	private final String Defender1 = "defender1";
+    private final String Defender2 = "defender2";
 }
