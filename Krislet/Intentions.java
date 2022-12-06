@@ -10,4 +10,5 @@ public enum Intentions {
 	DASH_TO_BALL,
 	DASH_TO_OWN_GOAL,
 	DASH_TO_ENEMY_GOAL,
+	WAIT_BALL
 }

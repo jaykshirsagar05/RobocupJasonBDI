@@ -10,7 +10,6 @@
 
 import java.lang.Math;
 import java.util.regex.*;
-import java.util.*;
 
 class Brain extends Thread implements SensorInput
 {
@@ -62,163 +61,47 @@ class Brain extends Thread implements SensorInput
     public void run()
     {
 	ObjectInfo object;
-	ObjectInfo enemyGoal;
-	ObjectInfo selfGoal;
-	ObjectInfo Field;
 
 	// first put it somewhere on my side
 	if(Pattern.matches("^before_kick_off.*",m_playMode))
-	    //initial position of goalie is (-50,100)
-		m_krislet.move( -Math.random()*52.5 , 34 - Math.random()*68.0 );
+	    m_krislet.move( -Math.random()*52.5 , 34 - Math.random()*68.0 );
 
 	while( !m_timeOver )
 	    {
-		
-		List<Belief> perceptions = new ArrayList<>();
-
 		object = m_memory.getObject("ball");
+		if( object == null )
+		    {
+			// If you don't know where is ball then find it
+			m_krislet.turn(40);
+			m_memory.waitForNewInfo();
+		    }
+		else if( object.m_distance > 1.0 )
+		    {
+			// If ball is too far then
+			// turn to ball or 
+			// if we have correct direction then go to ball
+			if( object.m_direction != 0 )
+			    m_krislet.turn(object.m_direction);
+			else
+			    m_krislet.dash(10*object.m_distance);
+		    }
+		else 
+		    {
+			// We know where is ball and we can kick it
+			// so look for goal
+			if( m_side == 'l' )
+			    object = m_memory.getObject("goal r");
+			else
+			    object = m_memory.getObject("goal l");
 
-		if (object != null) {
-			perceptions.add(Belief.BALL_VISIBLE);
-
-			if(object.m_direction == 0) {
-				perceptions.add(Belief.FACING_BALL);
-			}
-
-			if(object.m_distance > 1.0) {
-				perceptions.add(Belief.ballFar);
-				if (object.m_distance < 30.0){
-					perceptions.add(Belief.BALL_IN_DEFENSE_RANGE);
-				}
-			}else {
-				perceptions.add(Belief.BALL_NEAR);
-				perceptions.add(Belief.ballTouched);
-			}
-
-		}
-
-		if( m_side == 'l' ) {
-			enemyGoal = m_memory.getObject("goal r");
-			selfGoal = m_memory.getObject("goal l");
-			
-			
-		} else {
-			enemyGoal = m_memory.getObject("goal l");
-			selfGoal = m_memory.getObject("goal r");
-			
-		}
-				
-		if(selfGoal != null) {
-			perceptions.add(Belief.SELF_GOAL_VISIBLE);
-			if(selfGoal.m_distance<1){
-				perceptions.add(Belief.AT_OWN_NET);
-				perceptions.add(Belief.READY_TO_DEFEND);
-			}
-		}
-		
-		if(enemyGoal != null) {
-			perceptions.add(Belief.goalVisible);
-
-			if(enemyGoal.m_direction == 0) {
-				perceptions.add(Belief.facingGoal);
-			}
-		}
-		System.out.println(perceptions);
-		JsonAgentYash agent = new JsonAgentYash("goalie.asl");
-        Intentions intent = agent.getIntention(perceptions);
-		System.out.println(intent + " is working correctly.");
-		System.out.println();
-		// m_krislet.turn(40);
-		// m_memory.waitForNewInfo();
-
-
-		// Doing action according to intention
-		
-		switch(intent) {
-			case TURN: {
+			if( object == null )
+			    {
 				m_krislet.turn(40);
 				m_memory.waitForNewInfo();
-				break;
-			}
-			case TURN_TO_BALL: {
-				if (object != null) {
-					m_krislet.turn(object.m_direction);
-				}
-				break;
-			}
-			case KICK: {
-				if (enemyGoal != null) {
-					m_krislet.kick(200, enemyGoal.m_direction);
-				}
-				break;
-			}
-			case FIND_GOAL: {
-				m_krislet.turn(40);
-				m_memory.waitForNewInfo();
-				break;
-			}
-			case MONITOR_BALL: {
-				break;
-			}
-			case DASH_TO_BALL: {
-				if (object != null) {
-					m_krislet.dash(10*object.m_distance);
-				}
-				break;
-			}
-			case DASH_TO_OWN_GOAL: {
-				if (selfGoal != null) {
-					m_krislet.dash(10*selfGoal.m_distance);
-				}
-				break;
-			}
-			case DASH_TO_ENEMY_GOAL: {
-				if (enemyGoal != null) {
-					m_krislet.dash(10*enemyGoal.m_distance);
-				}
-				break;
-			} 
-			case WAIT_BALL:{
-				if (enemyGoal != null){
-					m_krislet.turn(enemyGoal.m_direction);
-				}
-			}	
-				break;
-		}
-
-		// if( object == null )
-		//     {
-		// 	// If you don't know where is ball then find it
-		// 	m_krislet.turn(40);
-		// 	m_memory.waitForNewInfo();
-		//     }
-		// else if( object.m_distance > 1.0 )
-		//     {
-		// 	// If ball is too far then
-		// 	// turn to ball or 
-		// 	// if we have correct direction then go to ball
-		// 	if( object.m_direction != 0 )
-		// 	    m_krislet.turn(object.m_direction);
-		// 	else
-		// 	    m_krislet.dash(10*object.m_distance);
-		//     }
-		// else 
-		//     {
-		// 	// We know where is ball and we can kick it
-		// 	// so look for goal
-		// 	if( m_side == 'l' )
-		// 	    object = m_memory.getObject("goal r");
-		// 	else
-		// 	    object = m_memory.getObject("goal l");
-
-		// 	if( object == null )
-		// 	    {
-		// 		m_krislet.turn(40);
-		// 		m_memory.waitForNewInfo();
-		// 	    }
-		// 	else
-		// 	    m_krislet.kick(100, object.m_direction);
-		//     }
+			    }
+			else
+			    m_krislet.kick(100, object.m_direction);
+		    }
 
 		// sleep one step to ensure that we will not send
 		// two commands in one cycle.
