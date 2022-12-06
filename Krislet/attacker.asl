@@ -46,17 +46,24 @@
         !find_goal_post.
 +!rush_to_ball
 	: ball_visible & ball_near & facing_ball 
-	<- !find_goal_post.
+	<- turn;
+	- ball_visible;
+	- facing_ball
+	!find_goal_post.
 		
 //**goal = find_goal_post**//		
 // if attacker  can see the ball, in kick range and facing ball and goal post found then kick the ball
 +!find_goal_post
-	: ball_visible & ball_near & facing_ball & goal_visible
+	: ball_near & goal_visible 
 	<-	kick;
-		- ball_visible;
 		- ball_near;
-		- facing_ball;
 		- goal_visible;
 		!find_ball.
+
++!find_goal_post
+	: ball_near & not goal_visible 
+	<-	turn;
+		!find_goal_post.
+
 	
 		

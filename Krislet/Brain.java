@@ -200,6 +200,7 @@ class Brain extends Thread implements SensorInput
 				break;
 			}
 			case MONITOR_BALL: {
+				m_memory.waitForNewInfo();
 				break;
 			}
 			case DASH_TO_BALL: {
