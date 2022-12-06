@@ -14,8 +14,8 @@ public enum Belief {
 	selfGoalVisible,
 	atOwnNet,
 	goalVisible,
-	readyToDefend,
+	readyToDefend, // Not sure the meaning
 	facingBall,
 	facingGoal,
-	ballInDefenseRange
+	ballInDefenseRange // Not sure the meaning
 }

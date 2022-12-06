@@ -132,6 +132,22 @@ class Brain extends Thread implements SensorInput
 				
 		if(selfGoal != null) {
 			perceptions.add(Belief.selfGoalVisible);
+
+			if(selfGoal.m_distance < 2.0) {
+				perceptions.add(Belief.atOwnNet);
+			}
+
+			if(selfGoal.m_distance < 4.0) {
+				perceptions.add(Belief.inGZone);
+			}
+
+			if(selfGoal.m_distance < 30.0 && selfGoal.m_distance >= 4.0) {
+				perceptions.add(Belief.inDZone);
+			}
+
+			if(selfGoal.m_distance >= 30.0) {
+				perceptions.add(Belief.inAZone);
+			}
 		}
 		
 		if(enemyGoal != null) {
@@ -140,7 +156,16 @@ class Brain extends Thread implements SensorInput
 			if(enemyGoal.m_direction == 0) {
 				perceptions.add(Belief.facingGoal);
 			}
+
+			if(enemyGoal.m_distance > 80.0 && enemyGoal.m_distance < 90.0) {
+				perceptions.add(Belief.inDZone);
+			}
+
+			if(enemyGoal.m_distance <= 80.0 ) {
+				perceptions.add(Belief.inAZone);
+			}
 		}
+
 		System.out.println(perceptions);
 
 		JsonAgentYash agent = new JsonAgentYash(agentAsl);
