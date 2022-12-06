@@ -107,17 +107,17 @@ class Brain extends Thread implements SensorInput
 		object = m_memory.getObject("ball");
 
 		if (object != null) {
-			perceptions.add(Belief.ballVisible);
+			perceptions.add(Belief.BALL_VISIBLE);
 
 			if(object.m_direction == 0) {
-				perceptions.add(Belief.facingBall);
+				perceptions.add(Belief.FACING_BALL);
 			}
 
 			if(object.m_distance > 1.0) {
-				perceptions.add(Belief.ballFar);
+				perceptions.add(Belief.BALL_FAR);
 			} else {
-				perceptions.add(Belief.ballNear);
-				perceptions.add(Belief.ballTouched);
+				perceptions.add(Belief.BALL_NEAR);
+				perceptions.add(Belief.BALL_TOUCHED);
 			}
 
 		}
@@ -131,38 +131,38 @@ class Brain extends Thread implements SensorInput
 		}
 				
 		if(selfGoal != null) {
-			perceptions.add(Belief.selfGoalVisible);
+			perceptions.add(Belief.SELF_GOAL_VISIBLE);
 
 			if(selfGoal.m_distance < 2.0) {
-				perceptions.add(Belief.atOwnNet);
+				perceptions.add(Belief.AT_OWN_NET);
 			}
 
 			if(selfGoal.m_distance < 4.0) {
-				perceptions.add(Belief.inGZone);
+				perceptions.add(Belief.IN_G_ZONE);
 			}
 
 			if(selfGoal.m_distance < 30.0 && selfGoal.m_distance >= 4.0) {
-				perceptions.add(Belief.inDZone);
+				perceptions.add(Belief.IN_D_ZONE);
 			}
 
 			if(selfGoal.m_distance >= 30.0) {
-				perceptions.add(Belief.inAZone);
+				perceptions.add(Belief.IN_A_ZONE);
 			}
 		}
 		
 		if(enemyGoal != null) {
-			perceptions.add(Belief.goalVisible);
+			perceptions.add(Belief.GOAL_VISIBLE);
 
 			if(enemyGoal.m_direction == 0) {
-				perceptions.add(Belief.facingGoal);
+				perceptions.add(Belief.FACING_GOAL);
 			}
 
 			if(enemyGoal.m_distance > 80.0 && enemyGoal.m_distance < 90.0) {
-				perceptions.add(Belief.inDZone);
+				perceptions.add(Belief.IN_D_ZONE);
 			}
 
 			if(enemyGoal.m_distance <= 80.0 ) {
-				perceptions.add(Belief.inAZone);
+				perceptions.add(Belief.IN_A_ZONE);
 			}
 		}
 

@@ -4,18 +4,18 @@
 
 public enum Belief {
 	//Precepts used for defender.
-	ballVisible,
-	ballFar,
-	ballNear,
-	ballTouched,
-	inDZone,
-	inGZone,
-	inAZone,
-	selfGoalVisible,
-	atOwnNet,
-	goalVisible,
-	readyToDefend, // Not sure the meaning
-	facingBall,
-	facingGoal,
-	ballInDefenseRange // Not sure the meaning
+	BALL_VISIBLE,
+	BALL_FAR,
+	BALL_NEAR,
+	BALL_TOUCHED,
+	IN_D_ZONE,
+	IN_G_ZONE,
+	IN_A_ZONE,
+	SELF_GOAL_VISIBLE,
+	AT_OWN_NET,
+	GOAL_VISIBLE,
+	READY_TO_DEFEND, // Not sure the meaning
+	FACING_BALL,
+	FACING_GOAL,
+	BALL_IN_DEFENCE_RANGE // Not sure the meaning
 }
