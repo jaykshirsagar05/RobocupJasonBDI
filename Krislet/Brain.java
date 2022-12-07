@@ -66,13 +66,14 @@ class Brain extends Thread implements SensorInput
 	ObjectInfo object;
 	ObjectInfo enemyGoal;
 	ObjectInfo selfGoal;
+	ObjectInfo centerFlag;
 	String agentAsl = "";
 
 	// Putting the player in the field based on it's type and decide asl file
 	if(Pattern.matches("^before_kick_off.*",m_playMode)) {
 		switch(m_playerType) {
 			case Golie: {
-				m_krislet.move( -52.5 , 0 );
+				m_krislet.move( -12.5 , 0 );
 				agentAsl = "goalie.asl";
 				break;
 			}
@@ -115,6 +116,9 @@ class Brain extends Thread implements SensorInput
 
 			if(object.m_distance > 1.0) {
 				perceptions.add(Belief.BALL_FAR);
+				if (object.m_distance < 50.0){
+					perceptions.add(Belief.BALL_IN_DEFENCE_RANGE);
+				}
 			} else {
 				perceptions.add(Belief.BALL_NEAR);
 				perceptions.add(Belief.BALL_TOUCHED);
@@ -133,8 +137,9 @@ class Brain extends Thread implements SensorInput
 		if(selfGoal != null) {
 			perceptions.add(Belief.SELF_GOAL_VISIBLE);
 
-			if(selfGoal.m_distance < 2.0) {
+			if(selfGoal.m_distance < 1.0) {
 				perceptions.add(Belief.AT_OWN_NET);
+				perceptions.add(Belief.READY_TO_DEFEND);
 			}
 
 			if(selfGoal.m_distance < 4.0) {
@@ -165,7 +170,7 @@ class Brain extends Thread implements SensorInput
 				perceptions.add(Belief.IN_A_ZONE);
 			}
 		}
-
+		centerFlag = m_memory.getObject("flag c");
 		System.out.println(perceptions);
 
 		JsonAgentYash agent = new JsonAgentYash(agentAsl);
@@ -213,6 +218,10 @@ class Brain extends Thread implements SensorInput
 				if (selfGoal != null) {
 					m_krislet.dash(10*selfGoal.m_distance);
 				}
+				// if (m_side == 'r'){
+				// 	m_krislet.move( -52.5 , 0 );
+				// }else{
+				// 	m_krislet.move( 52.5 , 0 );}
 				break;
 			}
 			case DASH_TO_ENEMY_GOAL: {
@@ -221,6 +230,17 @@ class Brain extends Thread implements SensorInput
 				}
 				break;
 			} 
+			case WAIT_BALL:{
+				if (enemyGoal != null){
+					m_krislet.turn(enemyGoal.m_direction);
+				}
+			}	
+				break;
+
+			case TURN_AROUND:{
+				m_krislet.turn(centerFlag.m_direction);
+			}	
+				break;
 		}
 
 		// if( object == null )
