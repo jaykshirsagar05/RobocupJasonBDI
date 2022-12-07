@@ -14,8 +14,9 @@ public enum Belief {
 	SELF_GOAL_VISIBLE,
 	AT_OWN_NET,
 	GOAL_VISIBLE,
-	READY_TO_DEFEND, // Not sure the meaning
+	READY_TO_DEFEND,
 	FACING_BALL,
 	FACING_GOAL,
-	BALL_IN_DEFENCE_RANGE // Not sure the meaning
+	BALL_IN_DEFENCE_RANGE,
+	
 }
