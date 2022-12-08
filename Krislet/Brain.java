@@ -87,13 +87,13 @@ class Brain extends Thread implements SensorInput
 				break;
 			}
 			case Defender1: {
-				m_krislet.move( -34.25 , -20.16 );
-				agentAsl = "defender.asl";
+				m_krislet.move( -10.0 , -10.0 );
+				agentAsl = "final_defender.asl";
 				break;
 			}
 			case Defender2: {
 				m_krislet.move( -34.25 , 20.16 );
-				agentAsl = "defender.asl";
+				agentAsl = "final_defender.asl";
 				break;
 			}
 		}
@@ -118,6 +118,9 @@ class Brain extends Thread implements SensorInput
 			} else {
 				perceptions.add(Belief.BALL_NEAR);
 				perceptions.add(Belief.BALL_TOUCHED);
+			}
+			if(object.m_distance < 40.0) {
+				perceptions.add(Belief.BALL_IN_RANGE);
 			}
 
 		}
@@ -210,17 +213,66 @@ class Brain extends Thread implements SensorInput
 				break;
 			}
 			case DASH_TO_OWN_GOAL: {
-				if (selfGoal != null) {
-					m_krislet.dash(10*selfGoal.m_distance);
+				if (selfGoal == null) {
+					if(enemyGoal != null) {
+						if(enemyGoal.m_direction < 0) {
+							m_krislet.turn(180 + enemyGoal.m_direction);
+						}
+						else {
+							m_krislet.turn(enemyGoal.m_direction - 180);
+						}
+					}
+					else {
+						m_krislet.turn(40);
+					}
+				}
+				else if(selfGoal.m_direction >= -5 && selfGoal.m_direction <= 5) {
+					m_krislet.dash(100);
+				}
+				else {
+					m_krislet.turn(selfGoal.m_direction);
 				}
 				break;
 			}
 			case DASH_TO_ENEMY_GOAL: {
-				if (enemyGoal != null) {
-					m_krislet.dash(10*enemyGoal.m_distance);
+				if (enemyGoal == null) {
+					if(selfGoal != null) {
+						if(selfGoal.m_direction < 0) {
+							m_krislet.turn(180 + selfGoal.m_direction);
+						}
+						else {
+							m_krislet.turn(selfGoal.m_direction - 180);
+						}
+					}
+					else {
+						m_krislet.turn(40);
+					}
+				}
+				else if(enemyGoal.m_direction >= -5 && enemyGoal.m_direction <= 5) {
+					m_krislet.dash(100);
+				}
+				else {
+					m_krislet.turn(enemyGoal.m_direction);
 				}
 				break;
 			} 
+			case DEFEND_KICK: {
+				if(enemyGoal != null) {
+					m_krislet.kick(100, enemyGoal.m_direction);
+				}
+				else if(selfGoal != null) {
+					if(selfGoal.m_direction < 0) {
+						m_krislet.kick(100,180 + selfGoal.m_direction);
+					}
+					else {
+						m_krislet.kick(100,selfGoal.m_direction - 180);
+					}
+				}
+				else {
+					m_krislet.turn(40);
+				}
+				
+			}
 		}
 
 		// if( object == null )

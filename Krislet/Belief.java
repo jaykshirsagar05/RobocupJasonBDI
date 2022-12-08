@@ -5,6 +5,7 @@
 public enum Belief {
 	//Precepts used for defender.
 	BALL_VISIBLE,
+	NOT_BALL_VISIBLE,
 	BALL_FAR,
 	BALL_NEAR,
 	BALL_TOUCHED,
@@ -14,8 +15,9 @@ public enum Belief {
 	SELF_GOAL_VISIBLE,
 	AT_OWN_NET,
 	GOAL_VISIBLE,
-	READY_TO_DEFEND, // Not sure the meaning
+	READY_TO_DEFEND,
 	FACING_BALL,
 	FACING_GOAL,
-	BALL_IN_DEFENCE_RANGE // Not sure the meaning
+	BALL_IN_RANGE,
+	BALL_IN_DEFENCE_RANGE
 }
