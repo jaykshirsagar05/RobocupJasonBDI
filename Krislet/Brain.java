@@ -68,7 +68,7 @@ class Brain extends Thread implements SensorInput
 	ObjectInfo enemyGoal;
 	ObjectInfo selfGoal;
 	ObjectInfo GoalieFlag_Center, GoalieFlag_Top, GoalieFlag_Bottom;
-	String agentAsl = "";
+	String agentAsl = null;
 
 	
 
@@ -91,7 +91,7 @@ class Brain extends Thread implements SensorInput
 				break;
 			}
 			case Defender1: {
-				m_krislet.move( -34.25 , -20.16 );
+				m_krislet.move( -10.0 , -10.0 );
 				agentAsl = "defender.asl";
 				break;
 			}
@@ -123,6 +123,9 @@ class Brain extends Thread implements SensorInput
 				if (object.m_distance < 23.0){
 					perceptions.add(Belief.BALL_IN_DEFENCE_RANGE);
 				}
+				if (object.m_distance < 30.0) {
+					perceptions.add(Belief.BALL_IN_RANGE);
+				}
 				
 			} else {
 				perceptions.add(Belief.BALL_NEAR);
@@ -153,11 +156,11 @@ class Brain extends Thread implements SensorInput
 				perceptions.add(Belief.AT_OWN_NET);
 			}
 
-			if(selfGoal.m_distance < 5.0) {
+			if(selfGoal.m_distance < 15.0) {
 				perceptions.add(Belief.IN_G_ZONE);
 			}
 
-			if(selfGoal.m_distance < 30.0 && selfGoal.m_distance >= 4.0) {
+			if(selfGoal.m_distance < 30.0 && selfGoal.m_distance >= 14.0) {
 				perceptions.add(Belief.IN_D_ZONE);
 			}
 
@@ -248,18 +251,6 @@ class Brain extends Thread implements SensorInput
 				}
 				break;
 			}
-			case DASH_TO_OWN_GOAL: {
-				if (selfGoal != null) {
-					m_krislet.dash(30*selfGoal.m_distance);
-				}
-				break;
-			}
-			case DASH_TO_ENEMY_GOAL: {
-				if (enemyGoal != null) {
-					m_krislet.dash(10*enemyGoal.m_distance);
-				}
-				break;
-			} 
 			case FIND_BALL:{
 				m_krislet.turn(40);
 				m_memory.waitForNewInfo();
@@ -280,6 +271,68 @@ class Brain extends Thread implements SensorInput
 				}
 			}
 			break;
+			case DASH_TO_OWN_GOAL: {
+				if( selfGoal == null ){
+					if(enemyGoal!= null){
+						if(enemyGoal.m_direction > 0)
+							m_krislet.turn(enemyGoal.m_direction - 180);
+						else{
+							m_krislet.turn(180 +  enemyGoal.m_direction);
+						}
+					}else {
+						m_krislet.turn(45);
+					}
+				}else if( selfGoal.m_direction < -5 || selfGoal.m_direction > 5)
+					m_krislet.turn(selfGoal.m_direction);
+				else
+					m_krislet.dash(100);
+				break;
+			}
+			case DASH_TO_ENEMY_GOAL: {
+				if(enemyGoal == null){
+					if(selfGoal!= null){
+						if(selfGoal.m_direction > 0)
+							m_krislet.turn(selfGoal.m_direction - 180);
+						else{
+							m_krislet.turn(180 +  selfGoal.m_direction);
+						}
+					}else {
+						if(GoalieFlag_Top!=null) {
+							m_krislet.dash(20*GoalieFlag_Top.m_direction);
+						}
+						else if(GoalieFlag_Bottom!=null) {
+							m_krislet.dash(20*GoalieFlag_Bottom.m_direction);
+						}
+						else {
+							m_krislet.turn(30);
+						}
+					}
+				}else if( enemyGoal.m_direction < -5 || enemyGoal.m_direction > 5)
+					m_krislet.turn(enemyGoal.m_direction);
+				else
+					m_krislet.dash(100);
+				break;
+			} 
+			case DEFEND_KICK: {
+				if(enemyGoal != null) {
+					m_krislet.kick(100, enemyGoal.m_direction);
+				}
+				else if(selfGoal != null) {
+					m_krislet.kick(100,180 + selfGoal.m_direction);
+				}
+				else {
+					if(GoalieFlag_Top!=null) {
+						m_krislet.kick(50,GoalieFlag_Top.m_direction);
+					}
+					else if(GoalieFlag_Bottom!=null) {
+						m_krislet.kick(50,GoalieFlag_Bottom.m_direction);
+					}
+					else {
+						m_krislet.turn(30);
+					}
+				}
+				break;
+			} 
 		}
 
 		// if( object == null )
