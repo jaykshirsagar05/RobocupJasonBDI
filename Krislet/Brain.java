@@ -67,7 +67,7 @@ class Brain extends Thread implements SensorInput
 	ObjectInfo object;
 	ObjectInfo enemyGoal;
 	ObjectInfo selfGoal;
-	ObjectInfo GoalieFlag_Center, GoalieFlag_Top, GoalieFlag_Bottom;
+	ObjectInfo GoalieFlag_Center, GoalieFlag_Top, GoalieFlag_Bottom, DefenderFlag_Top, DefenderFlag_Bottom;
 	String agentAsl = null;
 
 	
@@ -112,6 +112,8 @@ class Brain extends Thread implements SensorInput
 		GoalieFlag_Center = m_memory.getObject("flag c");
 		GoalieFlag_Top = m_memory.getObject("flag c | t");
 		GoalieFlag_Bottom = m_memory.getObject("flag c | b");
+		DefenderFlag_Top = m_memory.getObject("flag t l 20");
+		DefenderFlag_Bottom = m_memory.getObject("flag b l 20");
 
 		if (object != null) {
 			perceptions.add(Belief.BALL_VISIBLE);
@@ -297,11 +299,11 @@ class Brain extends Thread implements SensorInput
 							m_krislet.turn(180 +  selfGoal.m_direction);
 						}
 					}else {
-						if(GoalieFlag_Top!=null) {
-							m_krislet.dash(20*GoalieFlag_Top.m_direction);
+						if(DefenderFlag_Top!=null) {
+							m_krislet.dash(20*DefenderFlag_Top.m_direction);
 						}
-						else if(GoalieFlag_Bottom!=null) {
-							m_krislet.dash(20*GoalieFlag_Bottom.m_direction);
+						else if(DefenderFlag_Bottom!=null) {
+							m_krislet.dash(20*DefenderFlag_Bottom.m_direction);
 						}
 						else {
 							m_krislet.turn(30);
@@ -321,11 +323,11 @@ class Brain extends Thread implements SensorInput
 					m_krislet.kick(100,180 + selfGoal.m_direction);
 				}
 				else {
-					if(GoalieFlag_Top!=null) {
-						m_krislet.kick(50,GoalieFlag_Top.m_direction);
+					if(DefenderFlag_Top!=null) {
+						m_krislet.kick(50,DefenderFlag_Top.m_direction);
 					}
 					else if(GoalieFlag_Bottom!=null) {
-						m_krislet.kick(50,GoalieFlag_Bottom.m_direction);
+						m_krislet.kick(50,DefenderFlag_Bottom.m_direction);
 					}
 					else {
 						m_krislet.turn(30);
