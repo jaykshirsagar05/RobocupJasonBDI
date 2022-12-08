@@ -1,6 +1,6 @@
 //File Intentions.java
-
 //This file lists the choice of actions for our JasonAgent.
+
 public enum Intentions {
 	TURN,
 	TURN_TO_BALL,

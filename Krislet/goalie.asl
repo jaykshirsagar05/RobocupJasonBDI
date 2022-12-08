@@ -1,5 +1,4 @@
 // goalie agent
-// Author:  Hongbo Pang
 
 /* Initial beliefs */
 

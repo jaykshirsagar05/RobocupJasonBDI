@@ -30,11 +30,13 @@
 	<- dash_to_ball; 
 	!rush_to_ball.
 
+// if attacker is not in its zone, monitor ball
 +!find_ball
 	: ball_visible & in_d_zone & self_goal_visible
 	<- monitor_ball; 
 	!find_ball.
-	
+
+// if ball is near and visible, find goal post	
 +!find_ball
 	: ball_visible & ball_near
 	<- !find_goal_post.
@@ -72,7 +74,7 @@
 
 		
 //**goal = find_goal_post**//		
-// if attacker  can see the ball, in kick range and facing ball and goal post found then kick the ball
+// if attacker can see the ball, in kick range and facing ball and goal post found then kick the ball
 +!find_goal_post
 	: ball_near & goal_visible 
 	<-	kick;
@@ -83,6 +85,4 @@
 	: ball_near & not goal_visible 
 	<-	turn;
 		!find_goal_post.
-
-	
 		

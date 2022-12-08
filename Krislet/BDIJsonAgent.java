@@ -27,13 +27,13 @@ import java.util.*;
 */
 // CODE FROM THE FAQ (https://github.com/jason-lang/jason/blob/master/doc/faq.adoc)
 
-public class JsonAgentYash extends AgArch {
+public class BDIJsonAgent extends AgArch {
 
     private boolean running = false;
     private Intentions intentions;
     public List<Belief> cyclePerceptions;
 
-    public JsonAgentYash(String agent_asl) {
+    public BDIJsonAgent(String agent_asl) {
         Agent ag = new Agent();
 
         new TransitionSystem(ag, new Circumstance(), new Settings(), this);
@@ -56,11 +56,8 @@ public class JsonAgentYash extends AgArch {
     *   the jason librbary.
     */
     public Intentions getIntention(List<Belief> perceptions) {
-        //System.out.println("before2");
         cyclePerceptions = perceptions;
-        //System.out.println("mid");
         run();
-        //System.out.println("end");
         return intentions;
     }
 
@@ -70,8 +67,6 @@ public class JsonAgentYash extends AgArch {
     */
     public void run() {
         running = true;
-        
-        //System.out.println(perceive());
        
         while (isRunning()) {
             
@@ -135,18 +130,10 @@ public class JsonAgentYash extends AgArch {
         return running;
     }
 
-    /**
-    *
-    */
     public boolean canSleep() {
         return true;
     }
 
-
-    // Not Currently Used
-    public String getAgName() {
-        return "bob";
-    }
     public void sendMsg(jason.asSemantics.Message m) throws Exception {
     }
     public void broadcast(jason.asSemantics.Message m) throws Exception {
@@ -154,6 +141,7 @@ public class JsonAgentYash extends AgArch {
     public void checkMail() {
     }
 
+    // Testing asl file
     // Used to test JasonAgent is load asl files
     // public static void main(String a[]){
     //     String[] aslFiles = {"attacker.asl", "defender.asl", "goalie.asl"};

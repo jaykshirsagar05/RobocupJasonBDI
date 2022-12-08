@@ -1,9 +1,7 @@
 //File: Belief.java
-
 //These are the set of belief prepositions that our agent can add to it's belief space by processing the precepts. 
 
 public enum Belief {
-	//Precepts used for defender.
 	BALL_VISIBLE,
 	BALL_FAR,
 	BALL_NEAR,
