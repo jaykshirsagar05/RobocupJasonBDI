@@ -67,12 +67,12 @@ class Brain extends Thread implements SensorInput
 			}
 			case Defender1: {
 				m_krislet.move( -10.0 , -10.0 );
-				agentAsl = "defender.asl";
+				agentAsl = "defendernew.asl";
 				break;
 			}
 			case Defender2: {
 				m_krislet.move( -34.25 , 20.16 );
-				agentAsl = "defender.asl";
+				agentAsl = "defendernew.asl";
 				break;
 			}
 		}
