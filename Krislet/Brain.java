@@ -282,15 +282,6 @@ class Brain extends Thread implements SensorInput
 			break;
 		}
 
-		// clear goalie perception buffer, expect the flag 
-		Iterator<Belief> itr = Goalie_perceptions.iterator();
-        while (itr.hasNext()) {
-            Belief x = itr.next();
-            if (x != Belief.CHASING_BALL)
-				itr.remove();
-        }
-
-
 		// if( object == null )
 		//     {
 		// 	// If you don't know where is ball then find it
