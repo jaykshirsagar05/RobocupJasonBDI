@@ -1,12 +1,27 @@
 /*First existing goal in belief space*/
 
-!ballSearch.
+!go_to_position.
 
 /*>>>>>>PLAN TO ACHIEVE BALL SEARCH GOAL<<<<<<<*/
 
-+!ballSearch
-	:not in_d_zone
+
++!go_to_position
+	:in_a_zone
 	<- !gotoDzone.
+
++!go_to_position
+	:in_g_zone
+	<- !gotoDzone.
+
++!go_to_position
+	: in_d_zone
+	<- !ballSearch.
+
++!go_to_position
+	: not in_d_zone & not in_a_zone & not in_g_zone
+	<- turn;
+	!go_to_position.
+
 
 +!ballSearch
 	:not ball_visible
@@ -14,14 +29,13 @@
 	!ballSearch.
 	
 +!ballSearch
-	: in_d_zone & ball_visible & not ball_in_range
+	: ball_visible & not ball_in_range
 	<- turn_to_ball;
 	!ballSearch.
 
 +!ballSearch
-	: in_d_zone & ball_visible & ball_in_range
-	<- turn_to_ball;
-	!defend.
+	: ball_visible & ball_in_range
+	<- !defend.
 
 
 /*>>>>>>PLAN TO ACHIEVE DEFEND GOAL<<<<<<<*/
@@ -42,26 +56,15 @@
 	!defend.
 
 +!defend
-	:ball_visible & ball_near & facing_ball
-	<- !find_enemy_goal.
-
-+!find_enemy_goal
-	: ball_near & goal_visible 
-	<-	kick;
-		- ball_near;
-		!ballSearch.
-
-+!find_enemy_goal
-	: ball_near & not goal_visible 
-	<-	turn;
-		!find_enemy_goal.
-
-+!find_enemy_goal
-	: not ball_visible
-	<-	turn;
-		!ballSearch.
+	:ball_visible & ball_near
+	<- defend_kick;
+	!go_to_position.
 
 /*>>>>>>>>>>PLAN TO ACHIEVE GOTODZONE GOAL <<<<<<<<<*/
+
++!gotoDzone
+	: in_d_zone
+	<- !ballSearch.
 
 +!gotoDzone
 	: in_g_zone
@@ -78,8 +81,5 @@
 	<- dash_to_own_goal;
 	!gotoDzone.
 	
-+!ballSearch
-	: in_d_zone
-	<- !ballSearch.
 
 
