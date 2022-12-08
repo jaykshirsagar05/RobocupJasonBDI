@@ -23,7 +23,8 @@ class Brain extends Thread implements SensorInput
 		 char side, 
 		 int number, 
 		 String playMode,
-		 String playerType)
+		 String playerType
+		)
     {
 	m_timeOver = false;
 	m_krislet = krislet;
@@ -66,13 +67,16 @@ class Brain extends Thread implements SensorInput
 	ObjectInfo object;
 	ObjectInfo enemyGoal;
 	ObjectInfo selfGoal;
+	ObjectInfo GoalieFlag_Center, GoalieFlag_Top, GoalieFlag_Bottom;
 	String agentAsl = "";
+
+	
 
 	// Putting the player in the field based on it's type and decide asl file
 	if(Pattern.matches("^before_kick_off.*",m_playMode)) {
 		switch(m_playerType) {
 			case Golie: {
-				m_krislet.move( -52.5 , 0 );
+				m_krislet.move( -50 , 0 );
 				agentAsl = "goalie.asl";
 				break;
 			}
@@ -98,23 +102,28 @@ class Brain extends Thread implements SensorInput
 			}
 		}
 	}
-
+	List<Belief> Goalie_perceptions= new ArrayList<>();
 	while( !m_timeOver )
 	    {
-		
 		List<Belief> perceptions = new ArrayList<>();
-
+		Intentions intent;
 		object = m_memory.getObject("ball");
+		//help to keep in goalie zone
+		GoalieFlag_Center = m_memory.getObject("flag c");
+		GoalieFlag_Top = m_memory.getObject("flag c | t");
+		GoalieFlag_Bottom = m_memory.getObject("flag c | b");
 
 		if (object != null) {
 			perceptions.add(Belief.BALL_VISIBLE);
-
 			if(object.m_direction == 0) {
 				perceptions.add(Belief.FACING_BALL);
 			}
-
 			if(object.m_distance > 1.0) {
 				perceptions.add(Belief.BALL_FAR);
+				if (object.m_distance < 23.0){
+					perceptions.add(Belief.BALL_IN_DEFENCE_RANGE);
+				}
+				
 			} else {
 				perceptions.add(Belief.BALL_NEAR);
 				perceptions.add(Belief.BALL_TOUCHED);
@@ -132,12 +141,19 @@ class Brain extends Thread implements SensorInput
 				
 		if(selfGoal != null) {
 			perceptions.add(Belief.SELF_GOAL_VISIBLE);
+			
+			if(selfGoal.m_direction == 0) {
+				perceptions.add(Belief.FACING_SELF_GOAL);
+			}
 
-			if(selfGoal.m_distance < 2.0) {
+			if (selfGoal.m_distance >3.0){
+				perceptions.add(Belief.SELF_GOAL_FAR);
+			}
+			if(selfGoal.m_distance <3.0) {
 				perceptions.add(Belief.AT_OWN_NET);
 			}
 
-			if(selfGoal.m_distance < 4.0) {
+			if(selfGoal.m_distance < 5.0) {
 				perceptions.add(Belief.IN_G_ZONE);
 			}
 
@@ -152,6 +168,7 @@ class Brain extends Thread implements SensorInput
 		
 		if(enemyGoal != null) {
 			perceptions.add(Belief.GOAL_VISIBLE);
+			Goalie_perceptions.add(Belief.GOAL_VISIBLE);
 
 			if(enemyGoal.m_direction == 0) {
 				perceptions.add(Belief.FACING_GOAL);
@@ -166,10 +183,32 @@ class Brain extends Thread implements SensorInput
 			}
 		}
 
+		// if goalie is outside of serving range, add perception 
+		if (GoalieFlag_Center != null){
+			if (GoalieFlag_Center.m_distance < 32){
+				perceptions.add(Belief.NOT_IN_GOALIE_RANGE);
+			}
+		}else if (GoalieFlag_Top != null){
+			if (GoalieFlag_Top.m_distance < 43){
+				perceptions.add(Belief.NOT_IN_GOALIE_RANGE);
+			}
+		}else if (GoalieFlag_Bottom != null){
+			if (GoalieFlag_Bottom.m_distance < 43){
+				perceptions.add(Belief.NOT_IN_GOALIE_RANGE);
+			}
+		}
+
 		System.out.println(perceptions);
 
 		JsonAgentYash agent = new JsonAgentYash(agentAsl);
-        Intentions intent = agent.getIntention(perceptions);
+		// System.out.println(" is goalie");
+		// if (isGoalie){
+		// 	intent = agent.getIntention(Goalie_perceptions);
+
+		// }else{
+			
+		// }
+		intent = agent.getIntention(perceptions);
 
 		System.out.println(intent + " is working correctly.");
 	
@@ -205,13 +244,13 @@ class Brain extends Thread implements SensorInput
 			}
 			case DASH_TO_BALL: {
 				if (object != null) {
-					m_krislet.dash(10*object.m_distance);
+					m_krislet.dash(20*object.m_distance);
 				}
 				break;
 			}
 			case DASH_TO_OWN_GOAL: {
 				if (selfGoal != null) {
-					m_krislet.dash(10*selfGoal.m_distance);
+					m_krislet.dash(30*selfGoal.m_distance);
 				}
 				break;
 			}
@@ -221,7 +260,36 @@ class Brain extends Thread implements SensorInput
 				}
 				break;
 			} 
+			case FIND_BALL:{
+				m_krislet.turn(40);
+				m_memory.waitForNewInfo();
+			}	
+				break;
+			case KICK_TO_DEFENCE:{
+				if (selfGoal == null && enemyGoal == null){
+					m_krislet.kick(80, 45);
+					m_krislet.turn(45);
+				}else{
+					m_krislet.kick(100, 180);
+				}
+			}
+			break;
+			case TURN_TO_SELF_GOAL:{
+				if (selfGoal != null ){
+					m_krislet.turn(selfGoal.m_direction);
+				}
+			}
+			break;
 		}
+
+		// clear goalie perception buffer, expect the flag 
+		Iterator<Belief> itr = Goalie_perceptions.iterator();
+        while (itr.hasNext()) {
+            Belief x = itr.next();
+            if (x != Belief.CHASING_BALL)
+				itr.remove();
+        }
+
 
 		// if( object == null )
 		//     {
